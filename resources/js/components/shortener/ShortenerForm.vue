@@ -38,7 +38,7 @@ const onSubmit = async (e: Event) => {
 
         const xsrf = getCookie('XSRF-TOKEN');
 
-        const res = await fetch('/api/shorten', {
+        const res = await fetch('/api/links', {
             method: 'POST',
             credentials: 'include',
             headers: {

@@ -17,7 +17,7 @@ Route::middleware('auth:sanctum')->get('/links', function (Request $request) {
         ->get();
 });
 
-Route::post('/shorten', function (Request $request) {
+Route::post('/links', function (Request $request) {
     $data = $request->validate([
         'url' => ['required', 'url'],
         'alias' => ['nullable', 'alpha_dash:ascii', 'min:3', 'max:30', 'unique:links,alias'],
