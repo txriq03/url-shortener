@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Card from '@/components/ui/card/Card.vue';
 import Button from '@/components/ui/button/Button.vue';
+import ShortenerForm from '@/components/shortener/ShortenerForm.vue';
 </script>
 
 <template>
@@ -17,7 +18,8 @@ import Button from '@/components/ui/button/Button.vue';
                 </div>
 
                 <!-- Fields and Generate Button -->
-
+                <ShortenerForm />
+                
                 <!-- Footer -->
                  <div class="mt-auto space-y-2">
                     <p class="text-foreground/50 text-sm">Want analytics?</p>
