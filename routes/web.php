@@ -12,6 +12,14 @@ Route::get('/', function () {
     return Inertia::render('URLShortener');
 })->name('shortener');
 
+
+Route::get('dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+
+require __DIR__.'/auth.php';
+
 Route::get('/{alias}', function (string $alias) {
     $link = Link::where('alias', $alias)->firstOrFail();
 
@@ -22,10 +30,4 @@ Route::get('/{alias}', function (string $alias) {
     return redirect()->away($link->url);
 })->where('alias', '[A-Za-z0-9-_]+');
 
-Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-
 require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
