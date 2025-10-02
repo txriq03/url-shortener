@@ -9,6 +9,14 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::middleware('auth:sanctum')->get('/links', function (Request $request) {
+    return $request->user()
+        ->links()                     
+        ->select('id', 'alias', 'url', 'click_count', 'created_at')
+        ->latest()
+        ->get();
+});
+
 Route::post('/shorten', function (Request $request) {
     $data = $request->validate([
         'url' => ['required', 'url'],

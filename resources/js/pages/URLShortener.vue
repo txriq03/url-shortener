@@ -78,19 +78,32 @@ async function logout() {
                 </div>
 
                 <!-- Fields and Generate Button -->
-                <ShortenerForm />
+                <ShortenerForm class="my-5" />
 
                 <!-- Footer -->
-                <Button
+                <div
                     v-if="user"
-                    class="mt-auto self-start"
-                    variant="secondary"
-                    @click="logout"
-                    >Logout</Button
+                    class="mt-auto flex flex-col gap-3 text-sm sm:flex-row sm:text-base"
                 >
+                    <Button
+                        class="cursor-pointer bg-red-500 hover:bg-red-600"
+                        as="a"
+                        href="/analytics"
+                    >
+                        Analytics
+                    </Button>
+                    <Button
+                        class="mt-auto cursor-pointer"
+                        variant="secondary"
+                        @click="logout"
+                        >Logout</Button
+                    >
+                </div>
                 <div v-else class="mt-auto space-y-2">
                     <p class="text-sm text-foreground/50">Want analytics?</p>
-                    <div class="flex gap-3 text-sm sm:text-base">
+                    <div
+                        class="flex flex-col gap-3 text-sm sm:flex-row sm:text-base"
+                    >
                         <Button
                             class="flex-1 bg-red-500 hover:bg-red-600"
                             as="a"
