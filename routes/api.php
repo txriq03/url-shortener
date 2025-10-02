@@ -9,7 +9,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::middleware('web')->post('/shorten', function (Request $request) {
+Route::post('/shorten', function (Request $request) {
     $data = $request->validate([
         'url' => ['required', 'url'],
         'alias' => ['nullable', 'alpha_dash:ascii', 'min:3', 'max:30', 'unique:links,alias'],
