@@ -4,23 +4,59 @@ import Button from '@/components/ui/button/Button.vue';
 import ShortenerForm from '@/components/shortener/ShortenerForm.vue';
 import { ref, onMounted } from 'vue';
 
-const authenticated = ref<boolean | null>(null);
+const user = ref(null);
+const loading = ref(true);
 
 onMounted(async () => {
   try {
-    const res = await fetch('/session', {
+    const res = await fetch('/api/user', {
       method: 'GET',
       credentials: 'include',
-      headers: { 'Accept': 'application/json' }
+      headers: { 'Accept': 'application/json' },
     })
-    const data = await res.json()
-    authenticated.value = data.authenticated
-    console.log(authenticated);
-  } catch (err) {
-    console.error(err)
-    authenticated.value = false
+    if (res.ok) {
+      user.value = await res.json()
+    } else if (res.status === 401) {
+      user.value = null
+    }
+  } finally {
+    loading.value = false
+    console.log("User:", user);
   }
 })
+
+// Needed to get XSRF token
+function getCookie(name: string): string | null {
+  const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'))
+  return match ? decodeURIComponent(match[3]) : null
+}
+
+// Logout with Sanctum
+async function logout() {
+  // 🔑 first ensure CSRF cookie is set (once per session)
+  await fetch('/sanctum/csrf-cookie', {
+    method: 'GET',
+    credentials: 'include',
+  })
+
+    const xsrf = getCookie('XSRF-TOKEN')
+
+  // then hit logout
+  const res = await fetch('/logout', {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'X-XSRF-TOKEN': xsrf ?? '',
+    },
+  })
+
+  if (res.ok) {
+    user.value = null
+  } else {
+    console.error('Logout failed', res.status)
+  }
+}
 
 </script>
 
@@ -41,7 +77,8 @@ onMounted(async () => {
                 <ShortenerForm />
                 
                 <!-- Footer -->
-                 <div v-if="authenticated === false" class="mt-auto space-y-2">
+                <Button v-if="user" class="mt-auto self-start" variant="secondary" @click="logout">Logout</Button>
+                 <div v-else class="mt-auto space-y-2">
                     <p class="text-foreground/50 text-sm">Want analytics?</p>
                      <div class="flex gap-3 text-sm sm:text-base">
                          <Button class="flex-1 bg-red-500 hover:bg-red-600" as="a" href="/login">Login</Button>
@@ -49,9 +86,6 @@ onMounted(async () => {
                      </div>
                  </div>
 
-                 <div v-else class="mt-auto">
-                    <Button variant="secondary">Logout</Button>
-                 </div>
 
             </div>
 
