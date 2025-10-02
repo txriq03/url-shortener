@@ -1,20 +1,26 @@
 <script setup lang="ts">
-import Input from '../ui/input/Input.vue';
+import { reactive, ref } from 'vue';
 import Button from '../ui/button/Button.vue';
-import { reactive, ref} from 'vue';
+import Input from '../ui/input/Input.vue';
 
 // Form object
 const form = reactive({
     url: '',
-    alias: ''
-})
+    alias: '',
+});
 
 // Form states
 const loading = ref(false);
 const error = ref<string | null>(null);
 const result = ref<any>(null);
 
-
+// Needed to get XSRF token
+function getCookie(name: string): string | null {
+    const match = document.cookie.match(
+        new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'),
+    );
+    return match ? decodeURIComponent(match[3]) : null;
+}
 
 const onSubmit = async (e: Event) => {
     e.preventDefault();
@@ -25,18 +31,26 @@ const onSubmit = async (e: Event) => {
     result.value = null;
 
     try {
+        await fetch('/sanctum/csrf-cookie', {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        const xsrf = getCookie('XSRF-TOKEN');
+
         const res = await fetch('/api/shorten', {
             method: 'POST',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-XSRF-TOKEN': xsrf ?? '',
             },
             body: JSON.stringify({
                 url: form.url,
                 alias: form.alias || undefined,
-            })
+            }),
         });
 
         // Handle errors from API
@@ -49,8 +63,7 @@ const onSubmit = async (e: Event) => {
 
         result.value = await res.json();
         console.log(result.value);
-
-    } catch(err) {
+    } catch (err) {
         if (!form.url) {
             error.value = 'Please enter your URL';
         } else {
@@ -61,22 +74,38 @@ const onSubmit = async (e: Event) => {
     } finally {
         loading.value = false;
     }
-}
-
-
+};
 </script>
 
 <template>
     <form class="flex flex-col gap-3" @submit="onSubmit">
-        <Input v-model="form.url" placeholder="Enter your URL" id="url" class="placeholder:text-sm" />
-        <Input v-form="form.alias" placeholder="Enter alias" id="alias" class="placeholder:text-sm"/>
-        <Button class="cursor-pointer self-start" type="submit" :disabled="loading || !form.url.trim()">{{ loading ? 'Generating...' : 'Generate' }}</Button>
+        <Input
+            v-model="form.url"
+            placeholder="Enter your URL"
+            id="url"
+            class="placeholder:text-sm"
+        />
+        <Input
+            v-model="form.alias"
+            placeholder="Enter alias"
+            id="alias"
+            class="placeholder:text-sm"
+        />
+        <Button
+            class="cursor-pointer self-start"
+            type="submit"
+            :disabled="loading || !form.url.trim()"
+            >{{ loading ? 'Generating...' : 'Generate' }}</Button
+        >
 
         <p v-if="error" class="mt-1 text-sm text-rose-500">{{ error }}</p>
 
         <!-- Display shortened URL -->
-        <Input v-if="result" :default-value="result.short_url" readonly class="font-mono text-emerald-400"/>
-
+        <Input
+            v-if="result"
+            :default-value="result.short_url"
+            readonly
+            class="font-mono text-emerald-400"
+        />
     </form>
-    
 </template>

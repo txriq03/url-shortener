@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('links', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('url');                  // original URL
             $table->string('alias')->unique();      // short code/slug
             $table->unsignedBigInteger('click_count')->default(0);
