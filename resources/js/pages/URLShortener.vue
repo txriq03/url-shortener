@@ -2,6 +2,26 @@
 import Card from '@/components/ui/card/Card.vue';
 import Button from '@/components/ui/button/Button.vue';
 import ShortenerForm from '@/components/shortener/ShortenerForm.vue';
+import { ref, onMounted } from 'vue';
+
+const authenticated = ref<boolean | null>(null);
+
+onMounted(async () => {
+  try {
+    const res = await fetch('/session', {
+      method: 'GET',
+      credentials: 'include',
+      headers: { 'Accept': 'application/json' }
+    })
+    const data = await res.json()
+    authenticated.value = data.authenticated
+    console.log(authenticated);
+  } catch (err) {
+    console.error(err)
+    authenticated.value = false
+  }
+})
+
 </script>
 
 <template>
@@ -21,12 +41,16 @@ import ShortenerForm from '@/components/shortener/ShortenerForm.vue';
                 <ShortenerForm />
                 
                 <!-- Footer -->
-                 <div class="mt-auto space-y-2">
+                 <div v-if="authenticated === false" class="mt-auto space-y-2">
                     <p class="text-foreground/50 text-sm">Want analytics?</p>
                      <div class="flex gap-3 text-sm sm:text-base">
                          <Button class="flex-1 bg-red-500 hover:bg-red-600" as="a" href="/login">Login</Button>
                          <Button class="flex-1" variant="secondary" as="a" href="/register">Sign up</Button>
                      </div>
+                 </div>
+
+                 <div v-else class="mt-auto">
+                    <Button variant="secondary">Logout</Button>
                  </div>
 
             </div>

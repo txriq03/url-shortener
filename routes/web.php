@@ -15,5 +15,12 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/session', function (Request $request) {
+    return response()->json([
+        'authenticated' => Auth::check(),
+        'user' => Auth::user(),
+    ]);
+})->middleware('web');
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
