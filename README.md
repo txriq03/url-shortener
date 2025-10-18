@@ -1,9 +1,10 @@
-Technical Test Instructions:
+# URL Shortener
+This is a simple Laravel application that can be used to shorten URLs.
 
-The objective of the test is to create a simple URL aliasing tool. Authenticated users should be able to supply lengthy URLs and receive shortened URLs in exchange (no more than 20 characters). Accessing these shortened URLs should result in a redirect to the original destination. The system should track clicks on the shortened URL, providing a simple analytics interface for authenticated users to view this information.
+## Features
+- It features Laravel's built-in authentication to allow users to view their shortened URLs
+- Metrics like click-counter can also be viewed for shortened URLs
+- Responsive UI/UX design
+- SQLite was chosen as the database as this is a small and simple web app
+- API routes to handle logic
 
-You should spend no longer than 2 hours on this test. It will be assessed across a wide number of areas including (but not limited to): database structure, data validation, performance, security, user experience and adherence to best development practices. Due to the breadth of the assessment, it is not expected that a fully functional system as described above is provided within 2 hours. Instead, your focus should be on the quality of the implementation as far as you are able to progress it in the time allowed.
-
-The attached codebase is a clean Laravel 12 install using the Vue starter kit. While these frameworks provide the tools required to complete the test by themselves, you may include any additional dependencies as you see fit (for example, an open-source UI component library). If you choose to do this, provide your reasoning for these inclusions at the bottom of this file. Furthermore, the tools provided in this codebase are solely for your convenience; you are not required to use them if there is an alternate approach you would take to completing this test.
-
-If there are features/issues/etc that you were unable to implement/address in the time allocated, describe them at the bottom of this file along with what your solution/approach would be. Additionally, any information provided on concerns beyond the scope of this test relating to typical development concerns (for example, an approach to testing or hosting) will be considered as part of the assessment.
